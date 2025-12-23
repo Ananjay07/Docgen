@@ -30,4 +30,4 @@ COPY startup.sh /app/startup.sh
 RUN sed -i 's/\r$//' /app/startup.sh && chmod +x /app/startup.sh
 
 # Run the application via startup script
-CMD ["/app/startup.sh"]
+CMD ["python", "-m", "uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
