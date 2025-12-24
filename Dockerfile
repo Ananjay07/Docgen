@@ -25,7 +25,7 @@ COPY startup.sh /app/startup.sh
 RUN dos2unix /app/startup.sh && chmod +x /app/startup.sh
 
 # Set working directory to backend so paths are relative as expected
-WORKDIR /app/backend
+WORKDIR /app/
 
 
 # Install Python dependencies
@@ -38,4 +38,4 @@ EXPOSE 8000
 
 
 # Run the application via startup script
-CMD ["/app/startup.sh"]
+CMD ["python", "-m", "uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
