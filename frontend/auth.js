@@ -1,5 +1,5 @@
 // auth.js
-const API_BASE = "";
+const API_BASE = ""
 
 function getToken() {
     return localStorage.getItem("token");
@@ -16,7 +16,7 @@ function removeToken() {
 function checkAuth(redirectIfMissing = true) {
     const token = getToken();
     if (!token && redirectIfMissing) {
-        window.location.href = "/static/login.html";
+        window.location.href = "/login.html";
         return false;
     }
     return true;

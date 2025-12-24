@@ -1,4 +1,4 @@
-const API_URL = "";
+const API_BASE = ""
 
 let currentMode = 'manual';
 
