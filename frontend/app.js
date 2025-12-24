@@ -1,4 +1,4 @@
-const API_BASE = ""
+const API_URL = "https://docorator1-ddhhfpc3eefvfrcy.centralindia-01.azurewebsites.net";
 
 let currentMode = 'manual';
 
