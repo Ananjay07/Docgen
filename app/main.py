@@ -19,6 +19,14 @@ from .auth import get_password_hash, verify_password, create_access_token, get_c
 from fastapi.middleware.cors import CORSMiddleware
 # Init Database Tables
 # Base.metadata.create_all(bind=engine) # Removed for Cosmos DB
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def health():
+    return {"status": "running"}
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("docgen")
