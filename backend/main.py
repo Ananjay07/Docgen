@@ -11,11 +11,11 @@ from datetime import timedelta
 
 load_dotenv(override=False)
 
-from .template_renderer import render_docx
-from .ai_client import generate_structured_with_gemini, GeminiError
-from .database import get_db
-from .models import User, Document
-from .auth import get_password_hash, verify_password, create_access_token, get_current_user
+from template_renderer import render_docx
+from ai_client import generate_structured_with_gemini, GeminiError
+from database import get_db
+from models import User, Document
+from auth import get_password_hash, verify_password, create_access_token, get_current_user
 from fastapi.middleware.cors import CORSMiddleware
 # Init Database Tables
 # Base.metadata.create_all(bind=engine) # Removed for Cosmos DB
