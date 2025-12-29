@@ -144,10 +144,10 @@
                         
                         <div class="doc-actions" style="display:flex; flex-direction:column; gap:0.5rem;">
                             <div style="display:flex; gap:0.5rem;">
-                                <button onclick="downloadDoc(${doc.id}, 'pdf')" class="btn-block" style="border:none; cursor:pointer; background:#ef4444; color:white; padding: 8px; border-radius:6px; font-size:0.9rem; flex:1; display:flex; align-items:center; justify-content:center; gap:5px;">
+                                <button onclick="downloadDoc('${doc.id}', 'pdf')" class="btn-block" style="border:none; cursor:pointer; background:#ef4444; color:white; padding: 8px; border-radius:6px; font-size:0.9rem; flex:1; display:flex; align-items:center; justify-content:center; gap:5px;">
                                     <i class="fa-solid fa-file-pdf"></i> PDF
                                 </button>
-                                 <button onclick="downloadDoc(${doc.id}, 'docx')" class="btn-block" style="border:none; cursor:pointer; background:#2563eb; color:white; padding: 8px; border-radius:6px; font-size:0.9rem; flex:1; display:flex; align-items:center; justify-content:center; gap:5px;">
+                                 <button onclick="downloadDoc('${doc.id}', 'docx')" class="btn-block" style="border:none; cursor:pointer; background:#2563eb; color:white; padding: 8px; border-radius:6px; font-size:0.9rem; flex:1; display:flex; align-items:center; justify-content:center; gap:5px;">
                                     <i class="fa-solid fa-file-word"></i> DOCX
                                 </button>
                             </div>
@@ -156,7 +156,7 @@
                                 <button onclick="window.location.href='/?edit_doc_id=${doc.id}'" class="btn-block" style="border:none; cursor:pointer; background:#f59e0b; color:white; padding: 8px; border-radius:6px; font-size:0.9rem; flex:1; display:flex; align-items:center; justify-content:center; gap:5px;">
                                     <i class="fa-solid fa-pen"></i> Edit
                                 </button>` : ''}
-                                <button onclick="deleteDoc(${doc.id})" class="btn-block" style="border:none; cursor:pointer; background:#64748b; color:white; padding: 8px; border-radius:6px; font-size:0.9rem; flex:1; display:flex; align-items:center; justify-content:center; gap:5px;">
+                                <button onclick="deleteDoc('${doc.id}')" class="btn-block" style="border:none; cursor:pointer; background:#64748b; color:white; padding: 8px; border-radius:6px; font-size:0.9rem; flex:1; display:flex; align-items:center; justify-content:center; gap:5px;">
                                     <i class="fa-solid fa-trash"></i> Delete
                                 </button>
                             </div>
