@@ -47,21 +47,33 @@ from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(title="Docorator Backend")
 
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://salmon-forest-06e284c00.6.azurestaticapps.net"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # or your static web app URL
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# @app.get("/")
-# async def read_index():
-#     return FileResponse("../frontend/index.html")
-
 @app.get("/")
 def health_check():
     return {"status": "ok"}
+
+@app.get("/health-db")
+def health_db(db_status: dict = Depends(get_db)):
+    try:
+        # Simple check: can we reference the container?
+        if db_status["users"] is None:
+             raise Exception("Users container is None")
+        return {"status": "connected", "cosmos_db": "accessible"}
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Database Disconnected: {str(e)}")
 
 # --- AUTH ROUTER ---
 
