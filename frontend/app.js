@@ -322,22 +322,23 @@ async function generateDocument() {
             throw new Error(err.detail || "Generation failed");
         }
 
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
+        const data = await response.json();
 
-        const pdfLink = document.getElementById('download-pdf');
-        pdfLink.href = url;
-        pdfLink.download = `${payload.doc_type}_${Date.now()}.pdf`;
-
-        const docxLink = document.getElementById('download-docx');
-        // Hack: The backend currently only returns one file blob.
-        // The user has to choose one return format or we update API to return URLs.
-        // For now, since user wants PDF mainly for preview, we show that.
-        // If we want DOCX, we need to toggle 'return_docx' in payload.
-        // For this demo, let's keep PDF as primary.
-
-        document.getElementById('download-docx').style.display = 'none';
+        // Show Success Area
         document.getElementById('result-area').style.display = 'block';
+
+        // Setup PDF Button
+        const pdfBtn = document.getElementById('download-pdf');
+        pdfBtn.onclick = () => downloadGeneratedDoc(data.doc_id, 'pdf');
+        pdfBtn.removeAttribute('href'); // Use onclick
+        pdfBtn.style.cursor = 'pointer';
+
+        // Setup DOCX Button
+        const docxBtn = document.getElementById('download-docx');
+        docxBtn.onclick = () => downloadGeneratedDoc(data.doc_id, 'docx');
+        docxBtn.removeAttribute('href'); // Use onclick
+        docxBtn.style.display = 'inline-flex'; // Show it
+        docxBtn.style.cursor = 'pointer';
 
     } catch (error) {
         alert("Error: " + error.message);
@@ -345,6 +346,53 @@ async function generateDocument() {
         btn.innerHTML = originalText;
         btn.disabled = false;
     }
+}
+
+async function downloadGeneratedDoc(id, format) {
+    try {
+        const btn = format === 'pdf' ? document.getElementById('download-pdf') : document.getElementById('download-docx');
+        const origText = btn.innerHTML;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Downloading...`;
+
+        const res = await authenticatedFetch(`${API_URL}/dashboard/download/${id}?format=${format}`);
+        if (!res) {
+            btn.innerHTML = origText;
+            return;
+        }
+
+        if (!res.ok) {
+            const err = await res.json();
+            alert("Download failed: " + (err.detail || "Unknown error"));
+            btn.innerHTML = origText;
+            return;
+        }
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+
+        // Guess filename
+        a.download = `document_${id}.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        btn.innerHTML = origText;
+
+    } catch (e) {
+        console.error(e);
+        alert("Download error: " + e.message);
+    }
+}
+
+    } catch (error) {
+    alert("Error: " + error.message);
+} finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+}
 }
 // --- Initialization ---
 

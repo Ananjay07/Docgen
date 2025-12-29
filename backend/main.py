@@ -11,7 +11,7 @@ from datetime import timedelta
 
 load_dotenv(override=False)
 
-from template_renderer import render_docx
+from template_renderer import render_docx, convert_to_pdf
 from ai_client import generate_structured_with_gemini, GeminiError
 from database import get_db
 from models import User, Document
@@ -518,6 +518,15 @@ def generate(req: GenerateRequest, current_user: User = Depends(get_current_user
         logger.exception("Template rendering failed")
         raise HTTPException(status_code=500, detail=f"Template rendering failed: {str(e)}")
 
+    # Convert to PDF
+    try:
+        pdf_success = convert_to_pdf(str(out_docx), str(GENERATED))
+        if not pdf_success:
+            logger.error("PDF generation returned false")
+            # We don't raise error, just log it, so user at least gets DOCX
+    except Exception as e:
+        logger.error(f"PDF generation crashed: {e}")
+
     # Force DOCX return (PDF conversion logic removed)
     final_file = out_docx
     media_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
@@ -543,8 +552,8 @@ def generate(req: GenerateRequest, current_user: User = Depends(get_current_user
     db["documents"].create_item(body=new_doc.dict(by_alias=True))
     # db.commit() # Not needed
 
-    return FileResponse(
-        path=str(final_file),
-        filename=final_file.name,
-        media_type=media_type
-    )
+    return {
+        "message": "Document generated successfully",
+        "doc_id": new_doc.id,
+        "doc_type": doc_type
+    }
