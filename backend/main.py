@@ -490,15 +490,32 @@ def generate(req: GenerateRequest, current_user: User = Depends(get_current_user
                     if v and k not in skip_keys:
                         fields[k] = v
 
-            # --- POST-PROCESSING: CLEANUP AI OUTPUT ---
-            if doc_type == "letter" and "body" in fields:
-                import re
-                body_text = fields["body"]
-                # Remove "Dear X," from the start
-                body_text = re.sub(r"^\s*Dear\s+.*?,?\s*", "", body_text, flags=re.IGNORECASE).strip()
-                # Remove "Sincerely, X" from the end
-                body_text = re.sub(r"\s*(Sincerely|Regards|Best|Cheers|Yours).*?(\n|$).*$", "", body_text, flags=re.IGNORECASE|re.DOTALL).strip()
-                fields["body"] = body_text
+                if doc_type == "letter":
+                    import re
+                    # 1. Clean Body Salutations (Start)
+                    if "body" in fields:
+                         body_text = fields["body"]
+                         # Remove "Dear X," or "To X," at the very start
+                         body_text = re.sub(r"^\s*(Dear|To)\s+.*?,?\s*", "", body_text, flags=re.IGNORECASE).strip()
+                         # Remove "Subject: ..." if AI added it
+                         body_text = re.sub(r"^\s*Subject:.*?\n", "", body_text, flags=re.IGNORECASE).strip()
+                         # Remove "Sincerely, X" from the end (Aggressive)
+                         # Matches newline + keyword + anything to end
+                         body_text = re.sub(r"\n\s*(Sincerely|Regards|Best Regards|Best|Cheers|Yours|Warm Regards).*$", "", body_text, flags=re.IGNORECASE|re.DOTALL).strip()
+                         fields["body"] = body_text
+
+                    # 2. Clean Receiver Name (Prevent "Dear Dear")
+                    if "receiver_name" in fields:
+                        # Remove "Dear " from name if present
+                        fields["receiver_name"] = re.sub(r"^\s*(Dear|Mr\.|Ms\.|Mrs\.|Dr\.)\s+", "", fields["receiver_name"], flags=re.IGNORECASE).strip()
+
+                    # 3. Clean Salutation Field if it exists
+                    if "receiver_salutation" in fields and fields["receiver_salutation"]:
+                         # If template has "Dear {{ salutation }}", we want just the name.
+                         # But if template is "{{ salutation }}", we want "Dear Name".
+                         # Based on "Dear Dear", the template likely has "Dear".
+                         # So let's strip "Dear" from this too.
+                         fields["receiver_salutation"] = re.sub(r"^\s*(Dear)\s+", "", fields["receiver_salutation"], flags=re.IGNORECASE).strip()
 
         except GeminiError as ge:
             logger.exception("Gemini generation failed")
