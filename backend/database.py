@@ -26,18 +26,23 @@ def init_cosmos():
         client = CosmosClient(COSMOS_URI, credential=COSMOS_KEY)
         db = client.create_database_if_not_exists(id=COSMOS_DB_NAME)
         
-        # Checking for Serverless compatibility: Remove offer_throughput
-        # Also fix PartitionKey usage (must be an object)
-        users_container = db.create_container_if_not_exists(
-            id="users", 
-            partition_key=PartitionKey(path="/email")
-            # offer_throughput=400 # Removed to support Serverless
-        )
-        documents_container = db.create_container_if_not_exists(
-            id="documents",
-            partition_key=PartitionKey(path="/user_id")
-            # offer_throughput=400 # Removed to support Serverless
-        )
+        # Helper to get or create container
+        def get_or_create(container_id, partition_path):
+            try:
+                return db.create_container_if_not_exists(
+                    id=container_id, 
+                    partition_key=PartitionKey(path=partition_path)
+                )
+            except exceptions.CosmosHttpResponseError as e:
+                if e.status_code == 409:
+                    logger.info(f"Container {container_id} definitely exists (caught 409), getting client...")
+                    return db.get_container_client(container_id)
+                else:
+                    raise e
+
+        users_container = get_or_create("users", "/email")
+        documents_container = get_or_create("documents", "/user_id")
+        
         logger.info(f"Connected to Cosmos DB: {COSMOS_DB_NAME}")
         init_error = None
     except Exception as e:
