@@ -38,6 +38,11 @@ async function authenticatedFetch(url, options = {}) {
     headers["Authorization"] = `Bearer ${token}`;
     options.headers = headers;
 
+    // Fix: Prepend API URL for relative paths
+    if (url.startsWith('/')) {
+        url = API_BASE + url;
+    }
+
     const response = await fetch(url, options);
     if (response.status === 401) {
         // Token expired
