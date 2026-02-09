@@ -44,4 +44,4 @@ Backend deployed on Azure App Service
 
 Environment variables managed via Azure configuration
 
-Frontend hosted separately and connected via REST APIs
+Frontend hosted separately and connected via REST API
