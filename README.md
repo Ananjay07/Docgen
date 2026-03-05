@@ -3,14 +3,6 @@
   <h1 align="center">🪶 Docorator (Docgen)</h1>
   <p align="center">
     <strong>An AI-powered document generation platform that makes crafting professional documents effortless.</strong>
-  </p>
-  <p align="center">
-    <a href="#features">Features</a> •
-    <a href="#tech-stack">Tech Stack</a> •
-    <a href="#getting-started">Getting Started</a> •
-    <a href="#how-it-works">How It Works</a> •
-    <a href="#license">License</a>
-  </p>
 </p>
 
 ---
