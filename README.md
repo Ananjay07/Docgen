@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://img.icons8.com/color/96/000000/document.png" alt="Docorator Logo" width="80" height="80">
-  <h1 align="center">🪶 Docorator (Docgen)</h1>
+  <h1 align="center">🪶 Docorator</h1>
   <p align="center">
     <strong>An AI-powered document generation platform that makes crafting professional documents effortless.</strong>
 </p>
